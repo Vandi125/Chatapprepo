@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChatApp</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta name="theme-color" content="#075e54">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; background:#e5ddd5; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .phone { width:360px; height:640px; background:#fff; border-radius:24px; box-shadow:0 15px 40px rgba(0,0,0,0.2); overflow:hidden; display:flex; flex-direction:column; }
+    .hidden { display:none; }
+    .header { background:#075e54; color:#fff; padding:14px 16px; font-weight:600; display:flex; align-items:center; justify-content:space-between; }
+    .screen { flex:1; background:#fff; display:flex; flex-direction:column; justify-content:center; padding:24px; }
+    h2 { text-align:center; margin-bottom:24px; color:#075e54; }
+    input { padding:12px; margin-bottom:12px; border-radius:8px; border:1px solid #ccc; font-size:15px; text-align:center; }
+    button { padding:12px; border-radius:8px; border:none; background:#25d366; color:#fff; font-size:16px; cursor:pointer; }
+    p.note { margin-top:12px; font-size:12px; color:#777; text-align:center; }
+    .tabs { display:flex; background:#075e54; color:#cfe9e4; font-size:13px; }
+    .tab { flex:1; text-align:center; padding:10px 0; }
+    .tab.active { color:#fff; border-bottom:3px solid #25d366; }
+    .chat-list { flex:1; background:#fff; overflow-y:auto; }
+    .chat { display:flex; padding:12px 16px; border-bottom:1px solid #f0f0f0; cursor:pointer; }
+    .avatar { width:48px; height:48px; border-radius:50%; background:#bbb; margin-right:12px; }
+    .chat-info { flex:1; }
+    .chat-info h4 { margin:0; font-size:16px; color:#111; }
+    .chat-info p { margin:4px 0 0; font-size:14px; color:#666; }
+    .time { font-size:12px; color:#999; }
+    .footer { padding:8px; text-align:center; font-size:12px; color:#777; background:#fafafa; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div id="loginScreen" class="screen">
+      <h2>ChatApp</h2>
+      <input type="text" placeholder="Phone number" />
+      <button onclick="goToOTP()">Continue</button>
+      <p class="note">Enter your number to start</p>
+    </div>
+    <div id="otpScreen" class="screen hidden">
+      <h2>Verify Number</h2>
+      <input id="otpInput" type="text" placeholder="Enter 6-digit OTP" />
+      <button onclick="verifyOTP()">Verify</button>
+      <p id="otpError" class="note" style="color:#c0392b; display:none;">Invalid OTP. Attempts left: 3</p>
+    </div>
+    <div id="appScreen" class="hidden">
+      <div class="header">
+        <span>ChatApp</span>
+        <span>⋮</span>
+      </div>
+      <div class="tabs">
+        <div class="tab">CALLS</div>
+        <div class="tab active">CHATS</div>
+        <div class="tab">STATUS</div>
+      </div>
+      <div class="chat-list">
+        <div class="chat">
+          <div class="avatar"></div>
+          <div class="chat-info">
+            <h4>John</h4>
+            <p>Hey, how are you?</p>
+          </div>
+          <div class="time">09:12</div>
+        </div>
+        <div class="chat">
+          <div class="avatar"></div>
+          <div class="chat-info">
+            <h4>Family Group</h4>
+            <p>See you later 👍</p>
+          </div>
+          <div class="time">Yesterday</div>
+        </div>
+      </div>
+      <div class="footer">ChatApp • Not real WhatsApp</div>
+    </div>
+  </div>
+
+  <script>
+    let failedAttempts=0;
+    const MAX_ATTEMPTS=3;
+    const otpInput=document.getElementById('otpInput');
+    const otpError=document.getElementById('otpError');
+    function goToOTP(){ failedAttempts=0; otpError.style.display='none'; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('otpScreen').classList.remove('hidden'); }
+    function verifyOTP(){
+      if(failedAttempts>=MAX_ATTEMPTS) return;
+      const otp=otpInput.value.trim();
+      if(otp==='123456'){
+        otpError.style.display='none';
+        document.getElementById('otpScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+      }else{
+        failedAttempts++;
+        otpError.style.display='block';
+        const attemptsLeft=MAX_ATTEMPTS-failedAttempts;
+        otpError.textContent=attemptsLeft>0?`Invalid OTP. Attempts left: ${attemptsLeft}`:'Too many failed attempts. OTP locked.';
+        otpInput.value='';
+        if(failedAttempts>=MAX_ATTEMPTS){ otpInput.disabled=true; document.querySelector('#otpScreen button').disabled=true; document.querySelector('#otpScreen button').style.background='#999'; }
+      }
+    }
+  </script>
+</body>
+</html>Add index.html 
